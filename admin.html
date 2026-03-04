@@ -160,7 +160,7 @@
             btn.disabled = false;
         };
 
-        xhr.open("POST", "/upload-pdf");
+        xhr.open("POST", `${window.API_BASE}/upload-pdf`);
         xhr.send(formData);
     }
     // --- ฟังก์ชันโหลดรายการไฟล์ ---
@@ -193,10 +193,10 @@
                     </td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <button title="ดูไฟล์" class="btn btn-sm btn-outline-primary" onclick="window.open('/pdfs/${file}')">
+                            <button title="ดูไฟล์" class="btn btn-sm btn-outline-primary" onclick="window.open('${window.API_BASE}/pdfs/${file}')">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button title="ดาวน์โหลด" class="btn btn-sm btn-outline-success" onclick="window.location.href='/pdfs/download/${file}'">
+                            <button title="ดาวน์โหลด" class="btn btn-sm btn-outline-success" onclick="window.location.href='${window.API_BASE}/pdfs/download/${file}'">
                                 <i class="bi bi-download"></i>
                             </button>
                             <button title="ลบ" class="btn btn-sm btn-outline-danger" onclick="deletePDF('${file}')">
@@ -214,7 +214,10 @@
 
     async function deletePDF(name) {
         if (!confirm(`ยืนยันการลบไฟล์: ${name}?`)) return;
-        await fetch(`${window.API_BASE}/pdfs/${name}`, { method: "DELETE" }, { credentials: "include" });
+        await fetch(`${window.API_BASE}/pdfs/${name}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
         loadPDFs();
     }
 
