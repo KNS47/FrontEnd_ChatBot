@@ -54,7 +54,7 @@
 
             <div class="text-end">
                 <strong>Admin User</strong><br>
-                <small class="text-muted">admin@municipality.go.th</small>
+                <small class="text-muted"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="751411181c1b3518001b1c161c0514191c010c5b121a5b011d">[email&#160;protected]</a></small>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-muted">คำถามวันนี้</h6>
+                                    <h6 class="text-muted" id="labelQuestions">คำถามวันนี้</h6>
                                     <h3 id="totalQuestions" class="mb-0">-</h3>
                                 </div>
                                 <i class="bi bi-chat-dots text-primary fs-2"></i>
@@ -80,7 +80,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-muted">ผู้ใช้งานวันนี้</h6>
+                                    <h6 class="text-muted" id="labelUsers">ผู้ใช้งานวันนี้</h6>
                                     <h3 id="totalUsers" class="mb-0">-</h3>
                                 </div>
                                 <i class="bi bi-people text-success fs-2"></i>
@@ -175,7 +175,7 @@
         </div>
     </div>
 </div>
-<script src="/config.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/config.js"></script>
 <script>
     const API = window.API_BASE;
     function authFetch(url, options = {}) {
