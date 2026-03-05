@@ -248,12 +248,12 @@
                         <div class="btn-group">
 
                             <button class="btn btn-sm btn-outline-primary"
-                            onclick="window.open('${window.API_BASE}/pdfs/${file}')">
+                            onclick="window.open('${window.API_BASE}/pdfs/${encodeURIComponent(file)}')">
                             <i class="bi bi-eye"></i>
                             </button>
 
                             <button class="btn btn-sm btn-outline-success"
-                            onclick="window.location.href='${window.API_BASE}/pdfs/download/${file}'">
+                            onclick="window.location.href='${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}'">
                             <i class="bi bi-download"></i>
                             </button>
 
