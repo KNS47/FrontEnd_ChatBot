@@ -215,7 +215,7 @@
 
             data.files.forEach((doc) => {
 
-                const file = doc.source;
+                const file = doc.source || doc.filename;
 
                 // ตัด uuid ออก
                 const displayName = file.includes("_") 
