@@ -33,7 +33,7 @@
             </button>
             <div class="text-end">
                 <span class="fw-bold d-block">Admin User</span>
-                <small class="text-muted">admin@municipality.go.th</small>
+                <small class="text-muted"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="345550595d5a7459415a5d575d4455585d404d1a535b1a405c">[email&#160;protected]</a></small>
             </div>
         </header>
 
@@ -109,7 +109,7 @@
             </div>
         </div> </div>
 </div>
-<script src="/config.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/config.js"></script>
 <script>
     async function checkAuth() {
         try {
@@ -215,15 +215,11 @@
 
             data.files.forEach((doc) => {
 
-                const file = doc.source;
-
-                // ตัด uuid ออก
-                const displayName = file.includes("_") 
-                    ? file.split("_").slice(1).join("_") 
-                    : file;
+                const file = doc.source;                              // UUID — ใช้กับ API
+                const displayName = doc.original_name || file;        // ชื่อจริง — แสดงให้ user เห็น
 
                 const category = doc.category;
-                const ext = file.split('.').pop().toUpperCase();
+                const ext = displayName.split('.').pop().toUpperCase();
 
                 const row = document.createElement("tr");
 
@@ -254,7 +250,7 @@
                         <div class="btn-group">
 
                             <button class="btn btn-sm btn-outline-primary"
-                            onclick="window.open('${window.API_BASE}/pdfs/${encodeURIComponent(file)}')">
+                            onclick="window.open('${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}')">
                             <i class="bi bi-eye"></i>
                             </button>
 
@@ -264,7 +260,7 @@
                             </button>
 
                             <button class="btn btn-sm btn-outline-danger"
-                            onclick="deletePDF('${encodeURIComponent(file)}')">
+                            onclick="deletePDF('${encodeURIComponent(file)}', '${displayName.replace(/'/g, "\\'")}')">
                             <i class="bi bi-trash"></i>
                             </button>
 
@@ -284,9 +280,9 @@
         }
     }
 
-    async function deletePDF(name) {
-        if (!confirm(`ยืนยันการลบไฟล์: ${name}?`)) return;
-        await fetch(`${window.API_BASE}/pdf/${name}`, {
+    async function deletePDF(encodedSource, displayName) {
+        if (!confirm(`ยืนยันการลบไฟล์: ${displayName}?`)) return;
+        await fetch(`${window.API_BASE}/pdf/${encodedSource}`, {
             method: "DELETE",
             credentials: "include"
         });
@@ -296,10 +292,7 @@
     function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("collapsed");
     }
-
-    // เรียกใช้งานเมื่อโหลดหน้า
-    window.onload = loadPDFs;
+    loadPDFs(); // โหลดรายการไฟล์เมื่อเปิดหน้า
 </script>
-
 </body>
 </html>
