@@ -89,6 +89,18 @@
 </div>
 <script src="/config.js"></script>
 <script>
+    async function checkAuth() {
+        try {
+            const res = await fetch(`${window.API_BASE}/api/check-admin`, { credentials: "include" });
+            const status = await res.json();
+            if (!status.authenticated) {
+                window.location.href = "/login"; // เด้งไปหน้า Login ถ้ายังไม่ได้ล็อกอิน
+            }
+        } catch (e) {
+            window.location.href = "/login";
+        }
+    }
+    checkAuth(); // รันทันทีเมื่อโหลดหน้า
     // --- ฟังก์ชัน uploadPDF ที่แก้ให้แสดงผลตามความเร็วเน็ตจริง ---
     async function uploadPDF() {
         const fileInput = document.getElementById("pdfFile");
