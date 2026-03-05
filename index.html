@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/chat.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
@@ -84,7 +85,15 @@
         div.className = `message ${sender}`;
 
         const content = document.createElement("div");
-        content.textContent = text;  // ใช้ textContent แทน innerHTML
+        if (sender === "bot") {
+            content.innerHTML = marked.parse(text || "");
+            content.querySelectorAll("a").forEach(a => {
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+            });
+        } else {
+            content.textContent = text;
+        }
 
         const time = document.createElement("span");
         time.className = "msg-time";
@@ -202,9 +211,14 @@
         }
     }
 
+    // ลบ session cookie เมื่อปิด/ออกจากหน้า
+    window.addEventListener("beforeunload", () => {
+        document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
+    });
+
     window.onload = () => {
         checkCookieConsent();
-        loadHistory(); // เรียกใช้ตอนโหลดหน้า/รีเฟรช
+        // ไม่ load history เพราะ session หมดเมื่อออกจากหน้าแล้ว
     };
 </script>
 
