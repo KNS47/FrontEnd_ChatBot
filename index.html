@@ -211,14 +211,18 @@
         }
     }
 
-    // ลบ session cookie เมื่อปิด/ออกจากหน้า
-    window.addEventListener("beforeunload", () => {
-        document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
+    // pagehide = ปิดหน้า/เปิด tab ใหม่ → ลบ session
+    // รีเฟรช (F5) จะไม่ trigger pagehide แบบ persisted=false เสมอไป
+    window.addEventListener("pagehide", (e) => {
+        if (!e.persisted) {
+            // ปิดจริง ไม่ใช่ bfcache → ลบ cookie
+            document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
+        }
     });
 
     window.onload = () => {
         checkCookieConsent();
-        // ไม่ load history เพราะ session หมดเมื่อออกจากหน้าแล้ว
+        loadHistory(); // รีเฟรช → โหลด history เดิม
     };
 </script>
 
