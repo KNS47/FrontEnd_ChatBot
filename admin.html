@@ -200,17 +200,27 @@
     }
     // --- ฟังก์ชันโหลดรายการไฟล์ ---
     async function loadPDFs() {
+
         const tbody = document.getElementById("pdfList");
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">กำลังโหลดข้อมูล...</td></tr>';
 
         try {
-            const res = await fetch(`${window.API_BASE}/pdfs`, { credentials: "include" });
+
+            const res = await fetch(`${window.API_BASE}/pdfs`, {
+                credentials: "include"
+            });
+
             const data = await res.json();
             tbody.innerHTML = "";
 
-            Object.entries(data.files).forEach(([file, category]) => {
+            data.forEach((doc) => {
+
+                const file = doc.filename || doc.file || "-";
+                const category = doc.category?.name || doc.category || "-";
                 const ext = file.split('.').pop().toUpperCase();
+
                 const row = document.createElement("tr");
+
                 row.innerHTML = `
                     <td>
                         <div class="d-flex align-items-center">
@@ -221,29 +231,50 @@
                             </div>
                         </div>
                     </td>
-                    <td class="text-center"><span class="badge bg-light text-dark border">${ext}</span></td>
-                    <td class="text-center"><span class="text-secondary">${category}</span></td>
+
+                    <td class="text-center">
+                        <span class="badge bg-light text-dark border">${ext}</span>
+                    </td>
+
+                    <td class="text-center">
+                        <span class="text-secondary">${category}</span>
+                    </td>
+
                     <td class="text-center">
                         <span class="badge badge-active rounded-pill">ใช้งาน</span>
                     </td>
+
                     <td class="text-end">
                         <div class="btn-group">
-                            <button title="ดูไฟล์" class="btn btn-sm btn-outline-primary" onclick="window.open('${window.API_BASE}/pdfs/${file}')">
-                                <i class="bi bi-eye"></i>
+
+                            <button class="btn btn-sm btn-outline-primary"
+                            onclick="window.open('${window.API_BASE}/pdfs/${file}')">
+                            <i class="bi bi-eye"></i>
                             </button>
-                            <button title="ดาวน์โหลด" class="btn btn-sm btn-outline-success" onclick="window.location.href='${window.API_BASE}/pdfs/download/${file}'">
-                                <i class="bi bi-download"></i>
+
+                            <button class="btn btn-sm btn-outline-success"
+                            onclick="window.location.href='${window.API_BASE}/pdfs/download/${file}'">
+                            <i class="bi bi-download"></i>
                             </button>
-                            <button title="ลบ" class="btn btn-sm btn-outline-danger" onclick="deletePDF('${file}')">
-                                <i class="bi bi-trash"></i>
+
+                            <button class="btn btn-sm btn-outline-danger"
+                            onclick="deletePDF('${file}')">
+                            <i class="bi bi-trash"></i>
                             </button>
+
                         </div>
                     </td>
                 `;
+
                 tbody.appendChild(row);
+
             });
+
         } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">ไม่สามารถโหลดข้อมูลได้</td></tr>';
+
+            tbody.innerHTML =
+            '<tr><td colspan="5" class="text-center text-danger">ไม่สามารถโหลดข้อมูลได้</td></tr>';
+
         }
     }
 
