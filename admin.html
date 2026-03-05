@@ -216,6 +216,12 @@
             data.files.forEach((doc) => {
 
                 const file = doc.source;
+
+                // ตัด uuid ออก
+                const displayName = file.includes("_") 
+                    ? file.split("_").slice(1).join("_") 
+                    : file;
+
                 const category = doc.category;
                 const ext = file.split('.').pop().toUpperCase();
 
@@ -226,7 +232,7 @@
                         <div class="d-flex align-items-center">
                             <i class="bi bi-file-earmark-pdf-fill pdf-icon"></i>
                             <div>
-                                <div class="fw-bold text-dark">${file}</div>
+                                <div class="fw-bold text-dark">${displayName}</div>
                                 <small class="text-muted">ขนาด: -</small>
                             </div>
                         </div>
@@ -258,7 +264,7 @@
                             </button>
 
                             <button class="btn btn-sm btn-outline-danger"
-                            onclick="deletePDF('${file}')">
+                            onclick="deletePDF('${encodeURIComponent(file)}')">
                             <i class="bi bi-trash"></i>
                             </button>
 
@@ -279,11 +285,16 @@
     }
 
     async function deletePDF(name) {
-        if (!confirm(`ยืนยันการลบไฟล์: ${name}?`)) return;
+
+        const decoded = decodeURIComponent(name)
+
+        if (!confirm(`ยืนยันการลบไฟล์: ${decoded}?`)) return;
+
         await fetch(`${window.API_BASE}/pdf/${name}`, {
             method: "DELETE",
             credentials: "include"
         });
+
         loadPDFs();
     }
 
