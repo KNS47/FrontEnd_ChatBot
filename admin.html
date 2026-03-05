@@ -285,16 +285,11 @@
     }
 
     async function deletePDF(name) {
-
-        const decoded = decodeURIComponent(name)
-
-        if (!confirm(`ยืนยันการลบไฟล์: ${decoded}?`)) return;
-
+        if (!confirm(`ยืนยันการลบไฟล์: ${name}?`)) return;
         await fetch(`${window.API_BASE}/pdf/${name}`, {
             method: "DELETE",
             credentials: "include"
         });
-
         loadPDFs();
     }
 
