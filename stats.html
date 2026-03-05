@@ -179,15 +179,18 @@
 <script>
     const API = window.API_BASE;
     function authFetch(url, options = {}) {
-    const auth = sessionStorage.getItem("admin_auth");
 
-    if (!options.headers) options.headers = {};
+        const auth = sessionStorage.getItem("admin_auth");
 
-    if (auth) {
-        options.headers["Authorization"] = "Basic " + auth;
-    }
+        if (!options.headers) options.headers = {};
 
-    return fetch(url, options);
+        if (auth) {
+            options.headers["Authorization"] = "Basic " + auth;
+        }
+
+        options.credentials = "include";   // ⭐ ส่ง session cookie
+
+        return fetch(url, options);
     }
     // Theme Colors
     const THEME_COLOR = '#3b82f6';
@@ -201,6 +204,7 @@
         const data = await res.json();
         const select = document.getElementById("categoryFilter");
         select.innerHTML = '<option value="all">ทุกหมวด</option>';
+        if (!Array.isArray(data)) return;
         data.forEach(cat => {
             select.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
@@ -230,6 +234,7 @@
         const query = new URLSearchParams({category: f.category, start: f.start, end: f.end}).toString();
         const res = await authFetch(`${API}/analytics/last7days?${query}`);
         const data = await res.json();
+        if (!Array.isArray(data)) return;
 
         if(trendChart) trendChart.destroy();
 
@@ -264,6 +269,7 @@
         const query = new URLSearchParams({start: f.start, end: f.end}).toString();
         const res = await authFetch(`${API}/analytics/users?${query}`);
         const data = await res.json();
+        if (!Array.isArray(data)) return;
 
         if(userChart) userChart.destroy();
 
@@ -297,7 +303,7 @@
 
         const table = document.getElementById("categoryTable");
         table.innerHTML = "";
-
+        if (!Array.isArray(data)) return;
         data.forEach(d => {
             table.innerHTML += `
                 <tr>
@@ -314,7 +320,8 @@
         const query = new URLSearchParams({start: f.start, end: f.end}).toString();
         const res = await authFetch(`${API}/analytics/category-breakdown?${query}`);
         const data = await res.json();
-        
+        if (!Array.isArray(data)) return;
+
         if(catChart) catChart.destroy();
         
         catChart = new Chart(document.getElementById("categoryChart"), {
