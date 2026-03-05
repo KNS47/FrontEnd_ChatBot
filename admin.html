@@ -213,10 +213,10 @@
             const data = await res.json();
             tbody.innerHTML = "";
 
-            data.forEach((doc) => {
+            data.files.forEach((doc) => {
 
-                const file = doc.filename || doc.file || "-";
-                const category = doc.category?.name || doc.category || "-";
+                const file = doc.source;
+                const category = doc.category;
                 const ext = file.split('.').pop().toUpperCase();
 
                 const row = document.createElement("tr");
@@ -280,7 +280,7 @@
 
     async function deletePDF(name) {
         if (!confirm(`ยืนยันการลบไฟล์: ${name}?`)) return;
-        await fetch(`${window.API_BASE}/pdfs/${name}`, {
+        await fetch(`${window.API_BASE}/pdf/${name}`, {
             method: "DELETE",
             credentials: "include"
         });
