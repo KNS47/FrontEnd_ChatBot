@@ -195,6 +195,7 @@
         };
 
         xhr.open("POST", `${window.API_BASE}/upload-pdf`);
+        xhr.withCredentials = true;   // ต้องเพิ่มบรรทัดนี้
         xhr.send(formData);
     }
     // --- ฟังก์ชันโหลดรายการไฟล์ ---
