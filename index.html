@@ -16,21 +16,37 @@
     <aside class="sidebar">
         <h3>เทศบาลตัวอย่าง</h3>
         <div class="card">
-            <b>ข้อมูลการใช้งาน</b>
-            <p>• เรื่องร้องเรียนทั้งหมด: 1,234</p>
-            <p>• เสร็จสิ้น: 1,189</p>
+            <p>แชทบอทสามารถช่วยตอบคำถามเกี่ยวกับข้อมูลของเทศบาล เช่น</p>
+            <p>• ข้อมูลบริการของเทศบาล</p>
+            <p>• ขั้นตอนการติดต่อหน่วยงาน</p>
+            <p>• ข่าวสารและกิจกรรมของเทศบาล</p>
+            <p>• ข้อมูลทั่วไปเกี่ยวกับเทศบาล</p>
         </div>
         <div class="card green">
-            <b>บริการออนไลน์</b>
-            <p>✓ แจ้งร้องเรียน 24/7</p>
-            <p>✓ ติดตามผลเรียลไทม์</p>
+            <b>ติดต่อเทศบาล</b>
+                <p>
+                    โทร: 
+                    <a href="tel:043246505">043-246505</a> 
+                    หรือ 
+                    <a href="tel:043246506">043-246506</a>
+                </p>
+            <p>เว็บไซต์: 
+                <a href="https://www.sila-kk.go.th/" target="_blank">
+                    www.sila-kk.go.th
+                </a>
+            </p>
+        </div>
+        <div class="admin-btn-wrapper">
+            <button class="admin-btn" onclick="window.location.href='login.html'">
+                🔐 Admin Login
+            </button>
         </div>
     </aside>
 
     <main class="chat-container">
         <div class="chat-header">
+            <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
             💬 แชทบอทเทศบาล
-            <small>ออนไลน์ • พร้อมให้บริการ</small>
         </div>
 
         <div class="chat-body" id="chat">
@@ -49,9 +65,9 @@
         </div>
 
         <div class="quick-actions" id="quickActions" style="display:none;">
-            <button onclick="toggleForm()">📄 แจ้งเรื่องร้องเรียน</button>
+            <button onclick="quickSend('แจ้งเรื่องร้องเรียน')">📄 แจ้งเรื่องร้องเรียน</button>
             <button onclick="quickSend('ขอคำปรึกษา')">❓ ขอคำปรึกษา</button>
-            <button onclick="quickSend('ตรวจสอบสถานะ')">🔍 ตรวจสอบสถานะ</button>
+            <button onclick="quickSend('ข้อมูลเทศบาล')">🏢 ข้อมูลเทศบาล</button>
             <button onclick="quickSend('ติดต่อเทศบาล')">📞 ติดต่อเทศบาล</button>
         </div>
 
@@ -224,6 +240,10 @@
         checkCookieConsent();
         loadHistory(); // รีเฟรช → โหลด history เดิม
     };
+    function toggleSidebar(){
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.classList.toggle("hidden");
+    }
 </script>
 
 </body>
