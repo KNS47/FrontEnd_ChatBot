@@ -257,19 +257,10 @@
         } catch (e) {}
     }
 
-    function clearSession() {
-        navigator.sendBeacon(`${window.API_BASE}/chat/clear-session`);
-        localStorage.removeItem("chat_cookie_consent");
-    }
-
-    // pagehide: ปิด tab / ปิด browser
     window.addEventListener("pagehide", (e) => {
-        if (!e.persisted) clearSession();
-    });
-
-    // visibilitychange: fallback สำหรับ mobile
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") clearSession();
+        if (!e.persisted) {
+            document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
+        }
     });
 
     function toggleSidebar() {
