@@ -2,62 +2,73 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot เทศบาล</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>แชทบอท เทศบาลตำบลศิลา</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="chat.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
 <div class="app">
-    <aside class="sidebar">
-        <h3>เทศบาลตัวอย่าง</h3>
-        <div class="card">
-            <p>แชทบอทสามารถช่วยตอบคำถามเกี่ยวกับข้อมูลของเทศบาล เช่น</p>
-            <p>• ข้อมูลบริการของเทศบาล</p>
-            <p>• ขั้นตอนการติดต่อหน่วยงาน</p>
-            <p>• ข่าวสารและกิจกรรมของเทศบาล</p>
-            <p>• ข้อมูลทั่วไปเกี่ยวกับเทศบาล</p>
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-emblem">
+            <div class="emblem-seal">🏛️</div>
+            <div class="emblem-name">เทศบาลตำบลศิลา</div>
+            <div class="emblem-sub">อำเภอเมือง จังหวัดขอนแก่น</div>
         </div>
-        <div class="card green">
-            <b>ติดต่อเทศบาล</b>
-                <p>
-                    โทร: 
-                    <a href="tel:043246505">043-246505</a> 
-                    หรือ 
-                    <a href="tel:043246506">043-246506</a>
-                </p>
-            <p>เว็บไซต์: 
-                <a href="https://www.sila-kk.go.th/" target="_blank">
-                    www.sila-kk.go.th
-                </a>
-            </p>
+        <div class="gold-bar"></div>
+        <div class="sidebar-body">
+            <div class="s-label">ผู้ช่วยช่วยคุณได้เรื่อง</div>
+            <div class="info-card">
+                <div class="ic-title">📋 บริการของเทศบาล</div>
+                <p>• ข้อมูลบริการและสวัสดิการ</p>
+                <p>• ขั้นตอนการติดต่อหน่วยงาน</p>
+                <p>• ข่าวสารและกิจกรรม</p>
+                <p>• ข้อมูลทั่วไปของเทศบาล</p>
+            </div>
+            <div class="s-label">ติดต่อโดยตรง</div>
+            <div class="contact-card info-card">
+                <div class="ic-title">📞 ติดต่อเทศบาล</div>
+                <p>โทร: <a href="tel:043246505">043-246505</a> หรือ <a href="tel:043246506">043-246506</a></p>
+                <p style="margin-top:6px;">เว็บไซต์: <a href="https://www.sila-kk.go.th/" target="_blank">www.sila-kk.go.th</a></p>
+            </div>
         </div>
-        <div class="admin-btn-wrapper">
-            <button class="admin-btn" onclick="window.location.href='login.html'">
-                🔐 Admin Login
-            </button>
+        <div class="sidebar-footer">
+            <button class="admin-btn" onclick="window.location.href='login.html'">🔐 เข้าสู่ระบบ Admin</button>
         </div>
     </aside>
 
+    <!-- Backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+    <!-- ── Chat ── -->
     <main class="chat-container">
+
         <div class="chat-header">
-            <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
-            💬 แชทบอทเทศบาล
+            <button class="toggle-sidebar" onclick="toggleSidebar()" aria-label="เปิด/ปิดเมนู">☰</button>
+            <div class="header-avatar">🤖</div>
+            <div class="header-info">
+                <div class="header-name">ผู้ช่วยเทศบาลตำบลศิลา</div>
+                <div class="header-status"><span class="pulse"></span>ออนไลน์ · พร้อมให้บริการ</div>
+            </div>
         </div>
 
         <div class="chat-body" id="chat">
-            </div>
+            <div class="date-divider">วันนี้</div>
+            <div class="welcome-chip">🙏 ยินดีต้อนรับสู่บริการแชทบอท เทศบาลตำบลศิลา</div>
+        </div>
 
         <div id="complaintForm" class="complaint-form" style="display:none;">
-            <h4>แบบฟอร์มแจ้งเรื่องร้องเรียน</h4>
+            <h4>📄 แบบฟอร์มแจ้งเรื่องร้องเรียน</h4>
             <input id="issue" placeholder="หัวข้อปัญหา *">
             <input id="location" placeholder="สถานที่เกิดเหตุ">
             <textarea id="detail" rows="2" placeholder="รายละเอียดเพิ่มเติม"></textarea>
-            <button style="width:100%; background:#28a745; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;" onclick="submitComplaint()">✅ ส่งเรื่องร้องเรียน</button>
+            <button class="submit-btn" onclick="submitComplaint()">✅ ส่งเรื่องร้องเรียน</button>
         </div>
 
         <div class="toggle-quick">
@@ -72,77 +83,101 @@
         </div>
 
         <div class="chat-footer">
-            <input id="msg" placeholder="พิมพ์ข้อความ..." onkeydown="if(event.key==='Enter') send()">
-            <button class="btn-send" onclick="send()">➤</button>
+            <div class="input-wrap">
+                <input id="msg" placeholder="พิมพ์ข้อความของคุณ..." onkeydown="if(event.key==='Enter') send()">
+            </div>
+            <button class="btn-send" onclick="send()" aria-label="ส่ง">➤</button>
         </div>
+
     </main>
 </div>
 
+<!-- Cookie Banner -->
 <div id="cookieBanner" class="cookie-banner" style="display:none;">
-    <div style="max-width: 800px; margin: auto;">
-        <p>เว็บไซต์นี้มีการใช้คุกกี้เพื่อเก็บประวัติการสนทนาของท่าน</p>
-        <div style="text-align: right;">
-            <button onclick="declineCookies()" style="padding:8px 15px; border:none; cursor:pointer;">ปฏิเสธ</button>
-            <button onclick="acceptCookies()" style="padding:8px 15px; background:var(--primary-color); color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px;">ยินยอม</button>
+    <div class="cookie-inner">
+        <p>🍪 เว็บไซต์นี้ใช้คุกกี้เพื่อเก็บประวัติการสนทนา เพื่อประสบการณ์ที่ต่อเนื่องและดีขึ้น</p>
+        <div class="cookie-actions">
+            <button class="btn-decline" onclick="declineCookies()">ปฏิเสธ</button>
+            <button class="btn-accept" onclick="acceptCookies()">ยินยอม</button>
         </div>
     </div>
 </div>
+
 <script src="/config.js"></script>
 <script>
     const chat = document.getElementById("chat");
+    let lastSender = null;
 
-    // --- Helpers ---
     function getNow() {
         return new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
     }
 
     function addMessage(text, sender) {
-        const div = document.createElement("div");
-        div.className = `message ${sender}`;
+        const row = document.createElement("div");
+        row.className = `msg-row ${sender}${sender === lastSender ? ' no-avatar' : ''}`;
 
-        const content = document.createElement("div");
+        const avatar = document.createElement("div");
+        avatar.className = "msg-avatar";
+        avatar.textContent = "🤖";
+
+        const col = document.createElement("div");
+        col.style.cssText = "display:flex;flex-direction:column;max-width:72%";
+        if (sender === "user") col.style.alignItems = "flex-end";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
         if (sender === "bot") {
-            content.innerHTML = marked.parse(text || "");
-            content.querySelectorAll("a").forEach(a => {
+            bubble.innerHTML = marked.parse(text || "");
+            bubble.querySelectorAll("a").forEach(a => {
                 a.target = "_blank";
                 a.rel = "noopener noreferrer";
             });
         } else {
-            content.textContent = text;
+            bubble.textContent = text;
         }
 
         const time = document.createElement("span");
         time.className = "msg-time";
         time.textContent = getNow();
 
-        div.appendChild(content);
-        div.appendChild(time);
+        col.appendChild(bubble);
+        col.appendChild(time);
+        if (sender === "bot") {
+            row.appendChild(avatar);
+            row.appendChild(col);
+        } else {
+            row.appendChild(col);
+        }
 
-        chat.appendChild(div);
+        chat.appendChild(row);
         chat.scrollTop = chat.scrollHeight;
+        lastSender = sender;
     }
+
     function showTypingEffect() {
-        const loader = document.createElement("div");
-        loader.className = "message bot loading";
-        loader.id = "typing-loader";
-        loader.innerHTML = `
-            <div class="typing-dots"><span></span><span></span><span></span></div>
-        `;
-        chat.appendChild(loader);
+        const row = document.createElement("div");
+        row.className = "msg-row bot";
+        row.id = "typing-loader";
+        const avatar = document.createElement("div");
+        avatar.className = "msg-avatar";
+        avatar.textContent = "🤖";
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+        chat.appendChild(row);
         chat.scrollTop = chat.scrollHeight;
-        return loader;
+        return row;
     }
 
-    // --- Core Functions ---
     async function handleChatRequest(text) {
         const consent = localStorage.getItem("chat_cookie_consent");
         if (consent !== "accepted") {
             addMessage("กรุณายินยอมการใช้คุกกี้ก่อนเริ่มสนทนาค่ะ", "bot");
             return;
         }
-
         const loader = showTypingEffect();
-
         try {
             const res = await fetch(`${window.API_BASE}/chat`, {
                 method: "POST",
@@ -155,7 +190,7 @@
             addMessage(data.answer, "bot");
         } catch (e) {
             loader.remove();
-            addMessage("ขออภัยค่ะ ระบบขัดข้องชั่วคราว", "bot");
+            addMessage("ขออภัยค่ะ ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง", "bot");
         }
     }
 
@@ -173,7 +208,6 @@
         handleChatRequest(text);
     }
 
-    // --- UI Toggles ---
     function toggleQuick() {
         const qa = document.getElementById("quickActions");
         const btn = document.getElementById("toggleQuickBtn");
@@ -189,9 +223,7 @@
 
     async function submitComplaint() {
         const issue = document.getElementById("issue").value;
-        if(!issue) { alert("กรุณาระบุหัวข้อ"); return; }
-        
-        // Mocking submit
+        if (!issue) { alert("กรุณาระบุหัวข้อ"); return; }
         addMessage("กำลังส่งเรื่องร้องเรียน...", "bot");
         setTimeout(() => {
             addMessage("✅ รับเรื่องร้องเรียนเรียบร้อยแล้วค่ะ เจ้าหน้าที่จะดำเนินการตรวจสอบโดยเร็ว", "bot");
@@ -200,7 +232,6 @@
         }, 1500);
     }
 
-    // --- Consent Logic ---
     function checkCookieConsent() {
         if (!localStorage.getItem("chat_cookie_consent")) {
             document.getElementById("cookieBanner").style.display = "block";
@@ -215,35 +246,34 @@
         document.getElementById("cookieBanner").style.display = "none";
     }
 
-    // ในไฟล์ chat.html
     async function loadHistory() {
-        const res = await fetch(`${window.API_BASE}/chat/history`, { credentials: "include" });
-        const data = await res.json();
-        if (data.history) {
-            chat.innerHTML = ""; // ล้างหน้าจอ
-            data.history.forEach(m => {
-                addMessage(m.content, m.role === "user" ? "user" : "bot");
-            });
-        }
+        try {
+            const res = await fetch(`${window.API_BASE}/chat/history`, { credentials: "include" });
+            const data = await res.json();
+            if (data.history && data.history.length) {
+                chat.innerHTML = "";
+                data.history.forEach(m => addMessage(m.content, m.role === "user" ? "user" : "bot"));
+            }
+        } catch (e) {}
     }
 
-    // pagehide = ปิดหน้า/เปิด tab ใหม่ → ลบ session
-    // รีเฟรช (F5) จะไม่ trigger pagehide แบบ persisted=false เสมอไป
     window.addEventListener("pagehide", (e) => {
         if (!e.persisted) {
-            // ปิดจริง ไม่ใช่ bfcache → ลบ cookie
             document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
         }
     });
 
+    function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebarBackdrop");
+        const isHidden = sidebar.classList.toggle("hidden");
+        backdrop.classList.toggle("active", !isHidden);
+    }
+
     window.onload = () => {
         checkCookieConsent();
-        loadHistory(); // รีเฟรช → โหลด history เดิม
+        loadHistory();
     };
-    function toggleSidebar(){
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.classList.toggle("hidden");
-    }
 </script>
 
 </body>
