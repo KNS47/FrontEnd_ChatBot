@@ -173,19 +173,23 @@
 
     async function handleChatRequest(text) {
         const consent = localStorage.getItem("chat_cookie_consent");
-        const useSession = consent === "accepted";  // ← เช็คว่าจะใช้ session หรือไม่
+        const useSession = consent === "accepted";
 
         const loader = showTypingEffect();
         try {
             const res = await fetch(`${window.API_BASE}/chat`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: useSession ? "include" : "omit",  // ← ถ้าปฏิเสธ ไม่ส่ง cookie
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(useSession ? {} : { "X-No-Save": "true" })
+                },
+                credentials: useSession ? "include" : "omit",
                 body: JSON.stringify({ message: text })
             });
             const data = await res.json();
             loader.remove();
 
+            // Session หมดอายุ → ลบ consent แล้วแสดง banner ใหม่
             if (data.expired) {
                 localStorage.removeItem("chat_cookie_consent");
                 showCookieBanner();
@@ -241,13 +245,11 @@
     function showCookieBanner() {
         const banner = document.getElementById("cookieBanner");
         banner.style.display = "block";
-        banner.scrollIntoView({ behavior: "smooth", block: "end" });
     }
     function checkCookieConsent() {
-        // แสดง banner ถ้ายังไม่เคยตัดสินใจ หรือเคยปฏิเสธ (reset ให้เลือกใหม่ได้)
         const consent = localStorage.getItem("chat_cookie_consent");
-        if (!consent || consent === "declined") {
-            showCookieBanner();
+        if (!consent) {
+            setTimeout(() => showCookieBanner(), 300);
         }
     }
     function acceptCookies() {
@@ -283,7 +285,7 @@
         backdrop.classList.toggle("active", !isHidden);
     }
 
-    window.onload = () => {
+    document.addEventListener("DOMContentLoaded", () => {
         checkCookieConsent();
         loadHistory();
 
@@ -291,7 +293,7 @@
         if (window.innerWidth <= 768) {
             document.getElementById("sidebar").classList.add("hidden");
         }
-    };
+    });
 
 </script>
 
