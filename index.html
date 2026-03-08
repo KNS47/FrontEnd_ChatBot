@@ -191,7 +191,7 @@
             // Session หมดอายุ → ลบ consent แล้วแสดง banner ใหม่
             if (data.expired) {
                 localStorage.removeItem("chat_cookie_consent");
-                showCookieBanner();
+                document.getElementById("cookieBanner").style.display = "block";
                 addMessage("เซสชันหมดอายุแล้วค่ะ กรุณายืนยันการใช้คุกกี้เพื่อเริ่มบทสนทนาใหม่", "bot");
                 return;
             }
@@ -241,16 +241,9 @@
         }, 1500);
     }
 
-    function showCookieBanner() {
-        const banner = document.getElementById("cookieBanner");
-        banner.style.display = "block";
-        banner.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
     function checkCookieConsent() {
-        // แสดง banner ถ้ายังไม่เคยตัดสินใจ หรือเคยปฏิเสธ (reset ให้เลือกใหม่ได้)
-        const consent = localStorage.getItem("chat_cookie_consent");
-        if (!consent || consent === "declined") {
-            showCookieBanner();
+        if (!localStorage.getItem("chat_cookie_consent")) {
+            document.getElementById("cookieBanner").style.display = "block";
         }
     }
     function acceptCookies() {
@@ -289,13 +282,7 @@
     window.onload = () => {
         checkCookieConsent();
         loadHistory();
-
-        // ปิด sidebar อัตโนมัติตอนเปิดหน้าบนมือถือ
-        if (window.innerWidth <= 768) {
-            document.getElementById("sidebar").classList.add("hidden");
-        }
     };
-
 </script>
 
 </body>
