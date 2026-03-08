@@ -173,22 +173,19 @@
 
     async function handleChatRequest(text) {
         const consent = localStorage.getItem("chat_cookie_consent");
-        if (consent !== "accepted") {
-            addMessage("กรุณายินยอมการใช้คุกกี้ก่อนเริ่มสนทนาค่ะ", "bot");
-            return;
-        }
+        const useSession = consent === "accepted";  // ← เช็คว่าจะใช้ session หรือไม่
+
         const loader = showTypingEffect();
         try {
             const res = await fetch(`${window.API_BASE}/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include",
+                credentials: useSession ? "include" : "omit",  // ← ถ้าปฏิเสธ ไม่ส่ง cookie
                 body: JSON.stringify({ message: text })
             });
             const data = await res.json();
             loader.remove();
 
-            // Session หมดอายุ → ลบ consent แล้วแสดง banner ใหม่
             if (data.expired) {
                 localStorage.removeItem("chat_cookie_consent");
                 showCookieBanner();
