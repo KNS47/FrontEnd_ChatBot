@@ -434,8 +434,10 @@ body::before {
 
 /* ── Sidebar backdrop (mobile) ── */
 .sidebar-backdrop {
-    background: rgba(0,0,0,.35); z-index: 70;
-    backdrop-filter: blur(2px);
+    display: none;
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.35);
+    z-index: 70;
 }
 .sidebar-backdrop.active { display: block; }
 
