@@ -282,7 +282,13 @@
     window.onload = () => {
         checkCookieConsent();
         loadHistory();
+
+        // ปิด sidebar อัตโนมัติตอนเปิดหน้าบนมือถือ
+        if (window.innerWidth <= 768) {
+            document.getElementById("sidebar").classList.add("hidden");
+        }
     };
+
 </script>
 
 </body>
