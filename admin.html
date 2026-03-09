@@ -88,9 +88,39 @@
             </div>
 
             <div class="mt-4">
-                <h4 class="mb-3 text-dark fw-bold">
-                    <i class="bi bi-collection me-2"></i> เอกสารในระบบ
-                </h4>
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h4 class="text-dark fw-bold mb-0">
+                        <i class="bi bi-collection me-2"></i> เอกสารในระบบ
+                    </h4>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-funnel text-muted"></i>
+                        <select class="form-select form-select-sm" id="filterCategory" onchange="filterByCategory()" style="min-width: 220px;">
+                            <option value="">ทั้งหมด</option>
+                            <option value="ข้อมูลการบริหารงาน">ข้อมูลการบริหารงาน</option>
+                            <option value="ข้อมูลหน่วยตรวจสอบภายใน">ข้อมูลหน่วยตรวจสอบภายใน</option>
+                            <option value="ข้อมูลกองการเจ้าหน้าที่">ข้อมูลกองการเจ้าหน้าที่</option>
+                            <option value="ข้อมูลกองสวัสดิการสังคม">ข้อมูลกองสวัสดิการสังคม</option>
+                            <option value="ข้อมูลกองการศึกษา">ข้อมูลกองการศึกษา</option>
+                            <option value="ข้อมูลกองยุทธศาสตร์และงบประมาณ">ข้อมูลกองยุทธศาสตร์และงบประมาณ</option>
+                            <option value="ข้อมูลกองสาธารณสุขและสิ่งแวดล้อม">ข้อมูลกองสาธารณสุขและสิ่งแวดล้อม</option>
+                            <option value="ข้อมูลกองช่าง">ข้อมูลกองช่าง</option>
+                            <option value="ข้อมูลกองคลัง">ข้อมูลกองคลัง</option>
+                            <option value="ข้อมูลสำนักปลัดเทศบาล">ข้อมูลสำนักปลัดเทศบาล</option>
+                            <option value="ข้อมูลฝ่ายบริหาร">ข้อมูลฝ่ายบริหาร</option>
+                            <option value="ข้อมูลพื้นฐาน">ข้อมูลพื้นฐาน</option>
+                            <option value="ข้อมูลการให้บริการประชาชน">ข้อมูลการให้บริการประชาชน</option>
+                            <option value="ศูนย์ข้อมูลข่าวสาร">ศูนย์ข้อมูลข่าวสาร</option>
+                            <option value="ข้อมูลมาตรการความ">ข้อมูลมาตรการความ</option>
+                            <option value="โปร่งใสการจัดการทุจริต">โปร่งใสการจัดการทุจริต</option>
+                            <option value="ข้อมูลการดำเนินการเพื่อป้องกันการทุจริต">ข้อมูลการดำเนินการเพื่อป้องกันการทุจริต</option>
+                            <option value="ข้อมูลการจัดซื้อจัดจ้าง">ข้อมูลการจัดซื้อจัดจ้าง</option>
+                            <option value="ข้อมูลการบริหารและพัฒนาทรัพยากรบุคคล">ข้อมูลการบริหารและพัฒนาทรัพยากรบุคคล</option>
+                            <option value="ข้อมูลการบริหารเงินงบประมาณ">ข้อมูลการบริหารเงินงบประมาณ</option>
+                            <option value="ข้อมูลทำนุบำรุงรักษา">ข้อมูลทำนุบำรุงรักษา</option>
+                        </select>
+                        <small id="filterCount" class="text-muted text-nowrap"></small>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table custom-table">
                         <thead>
@@ -123,6 +153,73 @@
         }
     }
     checkAuth(); // รันทันทีเมื่อโหลดหน้า
+    // --- เก็บข้อมูลเอกสารทั้งหมดไว้ filter ---
+    let allDocs = [];
+
+    function filterByCategory() {
+        const selected = document.getElementById("filterCategory").value;
+        const filtered = selected ? allDocs.filter(d => d.category === selected) : allDocs;
+        renderTable(filtered);
+        const count = document.getElementById("filterCount");
+        count.textContent = selected ? `แสดง ${filtered.length} จาก ${allDocs.length} รายการ` : `${allDocs.length} รายการ`;
+    }
+
+    function renderTable(docs) {
+        const tbody = document.getElementById("pdfList");
+        tbody.innerHTML = "";
+
+        if (docs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">ไม่พบเอกสารในหมวดหมู่นี้</td></tr>';
+            return;
+        }
+
+        docs.forEach((doc) => {
+            const file = doc.source;
+            const displayName = doc.original_name || file;
+            const category = doc.category;
+            const ext = displayName.split('.').pop().toUpperCase();
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-file-earmark-pdf-fill pdf-icon"></i>
+                        <div>
+                            <div class="fw-bold text-dark">${displayName}</div>
+                            <small class="text-muted">ขนาด: -</small>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-light text-dark border">${ext}</span>
+                </td>
+                <td class="text-center">
+                    <span class="text-secondary">${category}</span>
+                </td>
+                <td class="text-center">
+                    <span class="badge badge-active rounded-pill">ใช้งาน</span>
+                </td>
+                <td class="text-end">
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary"
+                        onclick="window.open('${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}')">
+                        <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success"
+                        onclick="window.location.href='${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}'">
+                        <i class="bi bi-download"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                        onclick="deletePDF('${encodeURIComponent(file)}', '${displayName.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
     // --- ฟังก์ชัน uploadPDF ที่แก้ให้แสดงผลตามความเร็วเน็ตจริง ---
     async function uploadPDF() {
         const fileInput = document.getElementById("pdfFile");
@@ -200,83 +297,18 @@
     }
     // --- ฟังก์ชันโหลดรายการไฟล์ ---
     async function loadPDFs() {
-
         const tbody = document.getElementById("pdfList");
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">กำลังโหลดข้อมูล...</td></tr>';
 
         try {
-
-            const res = await fetch(`${window.API_BASE}/pdfs`, {
-                credentials: "include"
-            });
-
+            const res = await fetch(`${window.API_BASE}/pdfs`, { credentials: "include" });
             const data = await res.json();
-            tbody.innerHTML = "";
-
-            data.files.forEach((doc) => {
-
-                const file = doc.source;                              // UUID — ใช้กับ API
-                const displayName = doc.original_name || file;        // ชื่อจริง — แสดงให้ user เห็น
-
-                const category = doc.category;
-                const ext = displayName.split('.').pop().toUpperCase();
-
-                const row = document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-file-earmark-pdf-fill pdf-icon"></i>
-                            <div>
-                                <div class="fw-bold text-dark">${displayName}</div>
-                                <small class="text-muted">ขนาด: -</small>
-                            </div>
-                        </div>
-                    </td>
-
-                    <td class="text-center">
-                        <span class="badge bg-light text-dark border">${ext}</span>
-                    </td>
-
-                    <td class="text-center">
-                        <span class="text-secondary">${category}</span>
-                    </td>
-
-                    <td class="text-center">
-                        <span class="badge badge-active rounded-pill">ใช้งาน</span>
-                    </td>
-
-                    <td class="text-end">
-                        <div class="btn-group">
-
-                            <button class="btn btn-sm btn-outline-primary"
-                            onclick="window.open('${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}')">
-                            <i class="bi bi-eye"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-success"
-                            onclick="window.location.href='${window.API_BASE}/pdfs/download/${encodeURIComponent(file)}'">
-                            <i class="bi bi-download"></i>
-                            </button>
-
-                            <button class="btn btn-sm btn-outline-danger"
-                            onclick="deletePDF('${encodeURIComponent(file)}', '${displayName.replace(/'/g, "\\'")}')">
-                            <i class="bi bi-trash"></i>
-                            </button>
-
-                        </div>
-                    </td>
-                `;
-
-                tbody.appendChild(row);
-
-            });
-
+            allDocs = data.files || [];
+            document.getElementById("filterCategory").value = "";
+            document.getElementById("filterCount").textContent = `${allDocs.length} รายการ`;
+            renderTable(allDocs);
         } catch (e) {
-
-            tbody.innerHTML =
-            '<tr><td colspan="5" class="text-center text-danger">ไม่สามารถโหลดข้อมูลได้</td></tr>';
-
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">ไม่สามารถโหลดข้อมูลได้</td></tr>';
         }
     }
 
