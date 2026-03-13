@@ -173,17 +173,14 @@
 
     async function handleChatRequest(text) {
         const consent = localStorage.getItem("chat_cookie_consent");
-        if (consent !== "accepted") {
-            addMessage("กรุณายินยอมการใช้คุกกี้ก่อนเริ่มสนทนาค่ะ", "bot");
-            return;
-        }
+        const noSave = consent !== "accepted"; // ถ้าไม่ยินยอม ไม่บันทึกประวัติ แต่คุยได้
         const loader = showTypingEffect();
         try {
             const res = await fetch(`${window.API_BASE}/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ message: text, no_save: noSave })
             });
             const data = await res.json();
             loader.remove();
