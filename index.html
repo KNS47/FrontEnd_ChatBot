@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>แชทบอท เทศบาลตำบลศิลา</title>
+    <title>แชทบอท เทศบาลเมืองศิลา</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-emblem">
             <div class="emblem-seal">🏛️</div>
-            <div class="emblem-name">เทศบาลตำบลศิลา</div>
+            <div class="emblem-name">เทศบาลเมืองศิลา</div>
             <div class="emblem-sub">อำเภอเมือง จังหวัดขอนแก่น</div>
         </div>
         <div class="gold-bar"></div>
@@ -53,14 +53,14 @@
             <button class="toggle-sidebar" onclick="toggleSidebar()" aria-label="เปิด/ปิดเมนู">☰</button>
             <div class="header-avatar">🤖</div>
             <div class="header-info">
-                <div class="header-name">ผู้ช่วยเทศบาลตำบลศิลา</div>
+                <div class="header-name">ผู้ช่วยเทศบาลเมืองศิลา</div>
                 <div class="header-status"><span class="pulse"></span>ออนไลน์ · พร้อมให้บริการ</div>
             </div>
         </div>
 
         <div class="chat-body" id="chat">
             <div class="date-divider">วันนี้</div>
-            <div class="welcome-chip">🙏 ยินดีต้อนรับสู่บริการแชทบอท เทศบาลตำบลศิลา</div>
+            <div class="welcome-chip">🙏 ยินดีต้อนรับสู่บริการแชทบอท เทศบาลเมืองศิลา</div>
         </div>
 
         <div id="complaintForm" class="complaint-form" style="display:none;">
@@ -112,7 +112,14 @@
         return new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function addMessage(text, sender) {
+    function formatTime(isoString) {
+        if (!isoString) return getNow();
+        try {
+            return new Date(isoString).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        } catch { return getNow(); }
+    }
+
+    function addMessage(text, sender, timestamp) {
         const row = document.createElement("div");
         row.className = `msg-row ${sender}${sender === lastSender ? ' no-avatar' : ''}`;
 
@@ -138,7 +145,7 @@
 
         const time = document.createElement("span");
         time.className = "msg-time";
-        time.textContent = getNow();
+        time.textContent = formatTime(timestamp);
 
         col.appendChild(bubble);
         col.appendChild(time);
@@ -173,30 +180,17 @@
 
     async function handleChatRequest(text) {
         const consent = localStorage.getItem("chat_cookie_consent");
-        if (consent !== "accepted") {
-            addMessage("กรุณายินยอมการใช้คุกกี้ก่อนเริ่มสนทนาค่ะ", "bot");
-            return;
-        }
+        const noSave = consent !== "accepted"; // ถ้าไม่ยินยอม ไม่บันทึกประวัติ แต่คุยได้
         const loader = showTypingEffect();
         try {
             const res = await fetch(`${window.API_BASE}/chat`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ message: text, no_save: noSave })
             });
             const data = await res.json();
             loader.remove();
-
-            // session หมดอายุ — เคลียร์ consent และแสดง banner ใหม่
-            if (data.session_expired) {
-                localStorage.removeItem("chat_cookie_consent");
-                document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
-                document.getElementById("cookieBanner").style.display = "block";
-                addMessage("หมดเวลาการสนทนา กรุณายืนยันการใช้คุกกี้เพื่อเริ่มสนทนาใหม่ค่ะ", "bot");
-                return;
-            }
-
             addMessage(data.answer, "bot");
         } catch (e) {
             loader.remove();
@@ -262,7 +256,7 @@
             const data = await res.json();
             if (data.history && data.history.length) {
                 chat.innerHTML = "";
-                data.history.forEach(m => addMessage(m.content, m.role === "user" ? "user" : "bot"));
+                data.history.forEach(m => addMessage(m.content, m.role === "user" ? "user" : "bot", m.created_at));
             }
         } catch (e) {}
     }
