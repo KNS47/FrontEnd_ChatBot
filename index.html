@@ -115,7 +115,8 @@
     function formatTime(isoString) {
         if (!isoString) return getNow();
         try {
-            return new Date(isoString).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            const s = isoString.endsWith("Z") || isoString.includes("+") ? isoString : isoString + "+00:00";
+            return new Date(s).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
         } catch { return getNow(); }
     }
 
@@ -254,6 +255,15 @@
         try {
             const res = await fetch(`${window.API_BASE}/chat/history`, { credentials: "include" });
             const data = await res.json();
+
+            // session หมดอายุ — เคลียร์ consent และแสดง banner ใหม่
+            if (data.session_expired) {
+                localStorage.removeItem("chat_cookie_consent");
+                document.cookie = "session_id=; Max-Age=0; path=/; SameSite=None; Secure";
+                document.getElementById("cookieBanner").style.display = "block";
+                return;
+            }
+
             if (data.history && data.history.length) {
                 chat.innerHTML = "";
                 data.history.forEach(m => addMessage(m.content, m.role === "user" ? "user" : "bot", m.created_at));
